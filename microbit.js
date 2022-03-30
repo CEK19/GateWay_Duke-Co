@@ -33,20 +33,16 @@ serial.onDataReceived(serial.delimiters(Delimiters.Hash), function () {
     }
     if (splitData[0] == "CTRL_FRBUZZ") {
         if (splitData[1] == "0") {
-            NPNLCD.ShowString("CLOSE-FR" + " ", 0, 0)
             buzzFraud = 0
         } else {
-            NPNLCD.ShowString("OPEN-FR" + " ", 0, 0)
             buzzFraud = 1
         }
         vCheckFraud()
     }
     if (splitData[0] == "CTRL_FBUZZ") {
         if (splitData[1] == "0") {
-            NPNLCD.ShowString("CLOSE-F" + " ", 0, 0)
             buzzFire = 0
         } else {
-            NPNLCD.ShowString("OPEN-F" + " ", 0, 0)
             buzzFire = 1
         }
         vFireNotify()
@@ -68,29 +64,35 @@ function vFireNotify () {
         serial.writeString("!VISUAL_WARFIRE:" + "1" + "#")
         if (buzzFire == 1) {
             // Chỗ này cắm Buzzer vô
-            pins.analogWritePin(AnalogPin.P4, 700)
-        } else {
-            pins.analogWritePin(AnalogPin.P4, 0)
-        }
-    } else {
-        serial.writeString("!VISUAL_WARFIRE:" + "0" + "#")
-        pins.analogWritePin(AnalogPin.P4, 0)
-    }
-}
-function vCheckFraud () {
-    if (NPNBitKit.ButtonDoorOpen(DigitalPin.P6) && lockState == 0) {
-        serial.writeString("!VISUAL_WARFRAUD:" + "1" + "#")
-        if (buzzFraud == 1) {
-            // Chỗ này cắm Buzzer vô
             pins.analogWritePin(AnalogPin.P10, 487)
         } else {
-            // Chỗ này cắm Buzzer vô
             pins.analogWritePin(AnalogPin.P10, 0)
         }
     } else {
+        serial.writeString("!VISUAL_WARFIRE:" + "0" + "#")
+        pins.analogWritePin(AnalogPin.P10, 0)
+    }
+}
+function vCheckFraud () {
+    if (NPNBitKit.ButtonDoorOpen(DigitalPin.P1)) {
+        NPNLCD.ShowString("OPENDOOR" + " ", 0, 0)
+        if (lockState == 0) {
+            serial.writeString("!VISUAL_WARFRAUD:" + "1" + "#")
+            if (buzzFraud == 1) {
+                // Chỗ này cắm Buzzer vô
+                pins.analogWritePin(AnalogPin.P4, 487)
+            } else {
+                // Chỗ này cắm Buzzer vô
+                pins.analogWritePin(AnalogPin.P4, 0)
+            }
+        } else {
+            serial.writeString("!VISUAL_WARFRAUD:" + "0" + "#")
+        }
+    } else {
+        NPNLCD.ShowString("CLOSEDOOR" + " ", 0, 0)
         serial.writeString("!VISUAL_WARFRAUD:" + "0" + "#")
         // Chỗ này cắm Buzzer vô
-        pins.analogWritePin(AnalogPin.P10, 0)
+        pins.analogWritePin(AnalogPin.P4, 0)
     }
 }
 let clk_count = 0
@@ -120,5 +122,5 @@ basic.forever(function () {
     if (clk_count == 2) {
         vCheckFraud()
     }
-    basic.pause(7000)
+    basic.pause(6000)
 })

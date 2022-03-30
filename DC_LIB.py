@@ -15,7 +15,7 @@ ADAFRUIT_IO_FEED_ID = {
 }
 
 ADAFRUIT_IO_USERNAME = "duke_and_co"
-ADAFRUIT_IO_KEY = ""
+ADAFRUIT_IO_KEY = "aio_ZFsO59HAQ3V4ZGXzsKHyeG0yLZPH"
 
 def connected(client):
     for field in ADAFRUIT_IO_FEED_ID:
